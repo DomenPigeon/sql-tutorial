@@ -80,7 +80,7 @@ VALUES (1, 'Alice', 1, 101),
 
 ### 1. Find the top 3 projects with the highest budgets
 
-**Instruction**: List the names and budgets of the top 3 projects with the highest budgets.
+**Instructions**: List the names and budgets of the top 3 projects with the highest budgets.
 <details>
 <summary>Solution</summary>
 
@@ -94,7 +94,7 @@ ORDER BY budget DESC LIMIT 3;
 
 ### 2. List employees who have not been assigned to any project or department
 
-**Instruction**: Show the names of employees who do not have a project or department assigned.
+**Instructions**: Show the names of employees who do not have a project or department assigned.
 <details>
 <summary>Solution</summary>
 
@@ -109,7 +109,7 @@ WHERE department_id IS NULL
 
 ### 3. List all employees with their department names and project names
 
-**Instruction**: Show all employees with their respective department names and project names. Include employees without a department or project.
+**Instructions**: Show all employees with their respective department names and project names. Include employees without a department or project.
 
 <details>
 <summary>Solution</summary>
@@ -125,7 +125,7 @@ FROM employees e
 
 ### 4. List all departments with the total number of employees and the total budget of their projects
 
-**Instruction**: Show each department with the count of employees and the sum of project budgets. Include departments without employees or projects.
+**Instructions**: Show each department with the count of employees and the sum of project budgets. Include departments without employees or projects.
 <details>
 <summary>Solution</summary>
 
@@ -141,7 +141,7 @@ GROUP BY d.department_name;
 
 ### 5. Count the number of employees in each department and each project
 
-**Instruction**: Show the department name, project name, and the number of employees in each combination.
+**Instructions**: Show the department name, project name, and the number of employees in each combination.
 <details>
 <summary>Solution</summary>
 
@@ -157,7 +157,7 @@ GROUP BY d.department_name, p.project_name;
 
 ### 6. Add 'side_projects' table
 
-**INSTRUCTION**: Create a new table called `side_projects` with the following columns:
+**Instructions**: Create a new table called `side_projects` with the following columns:
 
 - `project_id` with type `INT` and primary key
 - `project_name` with type `VARCHAR(100)`
@@ -194,7 +194,7 @@ VALUES (1, 'Project Zeta', 5000.00, 3, TRUE),
 
 ### 7. Add employees_side_projects table
 
-**INSTRUCTION**: Because each employee can work on multiple side projects,
+**Instructions**: Because each employee can work on multiple side projects,
 we need to create a new table called `employees_side_projects` with the following columns:
 
 - `employee_id` with type `INT`
@@ -244,7 +244,7 @@ VALUES (1, 1),
 
 ### 8. Find employees working on multiple projects
 
-**Instruction**: List the names of employees who are working on more than one project (main or side).
+**Instructions**: List the names of employees who are working on more than one project (main or side).
 <details>
 <summary>Solution</summary>
 
@@ -260,7 +260,7 @@ HAVING COUNT(esp.side_project_id) + COUNT(e.project_id) > 1;
 
 ### 9. Show on how many projects each employee is working
 
-**Instruction**: Show each employee's name and the total number of projects they are working on.
+**Instructions**: Show each employee's name and the total number of projects they are working on.
 <details>
 <summary>Solution</summary>
 
@@ -276,7 +276,7 @@ ORDER BY total_projects DESC;
 
 ### 10. List all projects
 
-**Instruction**: List all projects (main or side) with their names and order by name in ascending order.
+**Instructions**: List all projects (main or side) with their names and order by name in ascending order.
 
 <details>
 <summary>Solution</summary>
@@ -294,7 +294,7 @@ ORDER BY project_name DESC;
 
 ### 11. List projects and sort by number of people
 
-**Instruction**: List all projects (main or side) with their names and order by the number of people working on them in descending order.
+**Instructions**: List all projects (main or side) with their names and order by the number of people working on them in descending order.
 
 <details>
 <summary>Solution</summary>
@@ -324,7 +324,7 @@ ORDER BY people DESC
 
 ### 12. Find how many projects are there per department
 
-**Instruction**:
+**Instructions**:
 
 1. List the names of departments that have employees working on more than 3 different projects (main or side).
 2. Show top 3 departments and their project count with the highest number of projects.
@@ -354,7 +354,7 @@ ORDER BY project_count DESC LIMIT 3;
 
 ### 13. Show projects for each department in the same row
 
-**Instruction**:
+**Instructions**:
 
 1. Show the department name and the names of the projects they are working on in the same row.
 2. Show also side projects in another column.
