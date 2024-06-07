@@ -1,13 +1,20 @@
-# SQL Exercises Progress
+# SQL Tutorial
 
-## Postgres setup
+## Bare basics
+
+For basics follow the SQL Bolt tutorial: [SQL Bolt](https://sqlbolt.com/).
+Then you can set up a postgres database in podman (or docker) and try out the exercises below.
+
+## Setup
+
+### Postgres setup
 
 ```shell
 podman run --replace --name postgres-tutorial -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_PASSWORD=password -e POSTGRES_DB=tutorial -d -p 5432:5432 postgres
 podman exec -it postgres-tutorial psql -U postgres -d tutorial
 ```
 
-## Tables setup
+### Tables setup
 
 ```sql
 CREATE TABLE employees
@@ -73,7 +80,7 @@ VALUES (1, 'Alice', 1, 101),
 
 Completion mark: ✅
 
-### 1. ✅ Find the top 3 projects with the highest budgets
+### 1. Find the top 3 projects with the highest budgets
 
 **Instruction**: List the names and budgets of the top 3 projects with the highest budgets.
 <details>
@@ -87,7 +94,7 @@ ORDER BY budget DESC LIMIT 3;
 
 </details>
 
-### 2. ✅ List employees who have not been assigned to any project or department
+### 2. List employees who have not been assigned to any project or department
 
 **Instruction**: Show the names of employees who do not have a project or department assigned.
 <details>
@@ -102,7 +109,7 @@ WHERE department_id IS NULL
 
 </details>
 
-### 3. ✅ List all employees with their department names and project names
+### 3. List all employees with their department names and project names
 
 **Instruction**: Show all employees with their respective department names and project names. Include employees without a department or project.
 
@@ -118,7 +125,7 @@ FROM employees e
 
 </details>
 
-### 4. ✅ List all departments with the total number of employees and the total budget of their projects
+### 4. List all departments with the total number of employees and the total budget of their projects
 
 **Instruction**: Show each department with the count of employees and the sum of project budgets. Include departments without employees or projects.
 <details>
@@ -134,7 +141,7 @@ GROUP BY d.department_name;
 
 </details>
 
-### 5. ✅ Count the number of employees in each department and each project
+### 5. Count the number of employees in each department and each project
 
 **Instruction**: Show the department name, project name, and the number of employees in each combination.
 <details>
@@ -150,7 +157,7 @@ GROUP BY d.department_name, p.project_name;
 
 </details>
 
-### 6. ✅ Add 'side_projects' table
+### 6. Add 'side_projects' table
 
 **INSTRUCTION**: Create a new table called `side_projects` with the following columns:
 
@@ -187,7 +194,7 @@ VALUES (1, 'Project Zeta', 5000.00, 3, TRUE),
 
 </details>
 
-### 7. ✅ Add employees_side_projects table
+### 7. Add employees_side_projects table
 
 **INSTRUCTION**: Because each employee can work on multiple side projects,
 we need to create a new table called `employees_side_projects` with the following columns:
@@ -237,7 +244,7 @@ VALUES (1, 1),
 
 </details>
 
-### 8. ✅ Find employees working on multiple projects
+### 8. Find employees working on multiple projects
 
 **Instruction**: List the names of employees who are working on more than one project (main or side).
 <details>
@@ -253,7 +260,7 @@ HAVING COUNT(esp.side_project_id) + COUNT(e.project_id) > 1;
 
 </details>
 
-### 9. ✅ Find the total number of projects each employee is working on and sort in descending order
+### 9. Show on how many projects each employee is working
 
 **Instruction**: Show each employee's name and the total number of projects they are working on.
 <details>
@@ -267,7 +274,9 @@ GROUP BY e.employee_name
 ORDER BY total_projects DESC;
 ```
 
-### 10. ✅ List all projects
+</details>
+
+### 10. List all projects
 
 **Instruction**: List all projects (main or side) with their names and order by name in ascending order.
 
@@ -285,7 +294,7 @@ ORDER BY project_name DESC;
 
 </details>
 
-### 11. ✅ List projects and sort by number of people
+### 11. List projects and sort by number of people
 
 **Instruction**: List all projects (main or side) with their names and order by the number of people working on them in descending order.
 
@@ -315,31 +324,13 @@ ORDER BY people DESC
 
 </details>
 
-----------------------------------------------------------------
-----------------------------------------------------------------
-----------------------------------------------------------------
-----------------------------------------------------------------
-----------------------------------------------------------------
-----------------------------------------------------------------
+### 12. Find how many projects are there per department
 
-### 9. List employees and the total budget of the projects they are working on
+**Instruction**:
 
-**Instruction**: Show each employee's name and the total budget of the projects they are assigned to.
-<details>
-<summary>Solution</summary>
+1. List the names of departments that have employees working on more than 3 different projects (main or side).
+2. Show top 3 departments and their project count with the highest number of projects.
 
-```sql
-SELECT e.employee_name, SUM(p.budget) AS total_budget
-FROM employees e
-         LEFT JOIN projects p ON e.project_id = p.project_id
-GROUP BY e.employee_name;
-```
-
-</details>
-
-### 10. Find departments with more than 2 projects
-
-**Instruction**: List the names of departments that have employees working on more than 2 different projects.
 <details>
 <summary>Solution</summary>
 
@@ -347,90 +338,50 @@ GROUP BY e.employee_name;
 SELECT d.department_name
 FROM departments d
          JOIN employees e ON d.department_id = e.department_id
+         JOIN employees_side_projects esp ON e.employee_id = esp.employee_id
 GROUP BY d.department_name
-HAVING COUNT(DISTINCT e.project_id) > 2;
+HAVING COUNT(DISTINCT e.project_id) + COUNT(DISTINCT esp.side_project_id) > 3;
+```
+
+```sql
+SELECT d.department_name, COUNT(DISTINCT e.project_id) + COUNT(DISTINCT esp.side_project_id) AS project_count
+FROM departments d
+         LEFT JOIN employees e ON d.department_id = e.department_id
+         LEFT JOIN employees_side_projects esp ON e.employee_id = esp.employee_id
+GROUP BY d.department_name
+ORDER BY project_count DESC LIMIT 3;
 ```
 
 </details>
 
-### 11. Find the employee with the highest total project budget
+### 13. Show projects for each department in the same row
 
-**Instruction**: Show the name of the employee who is working on projects with the highest combined budget.
+**Instruction**:
+
+1. Show the department name and the names of the projects they are working on in the same row.
+2. Show also side projects in another column.
+
 <details>
 <summary>Solution</summary>
 
 ```sql
-SELECT e.employee_name
-FROM employees e
-         JOIN projects p ON e.project_id = p.project_id
-GROUP BY e.employee_name
-ORDER BY SUM(p.budget) DESC LIMIT 1;
-```
-
-</details>
-
-### 12. List all projects with their average employee count per department
-
-**Instruction**: Show each project's name and the average number of employees per department working on that project.
-<details>
-<summary>Solution</summary>
-
-```sql
-SELECT p.project_name, AVG(employee_count) AS avg_employee_count_per_dept
-FROM (SELECT p.project_id, p.project_name, d.department_id, COUNT(e.employee_id) AS employee_count
-      FROM projects p
-               LEFT JOIN employees e ON p.project_id = e.project_id
-               LEFT JOIN departments d ON e.department_id = d.department_id
-      GROUP BY p.project_id, p.project_name, d.department_id) subquery
-GROUP BY project_name;
-```
-
-</details>
-
-### 13. Find departments with no employees assigned to projects with budgets over $15,000
-
-**Instruction**: List the names of departments that do not have any employees working on projects with a budget over $15,000.
-<details>
-<summary>Solution</summary>
-
-```sql
-SELECT d.department_name
+SELECT d.department_name,
+       STRING_AGG(DISTINCT p.project_name, ', ') AS projects
 FROM departments d
          LEFT JOIN employees e ON d.department_id = e.department_id
          LEFT JOIN projects p ON e.project_id = p.project_id
-GROUP BY d.department_name
-HAVING SUM(CASE WHEN p.budget > 15000 THEN 1 ELSE 0 END) = 0;
+GROUP BY d.department_name;
 ```
 
-</details>
-
-### 14. List all employees and their next project based on alphabetical order of project names
-
-**Instruction**: Show each employee's name and the name of their next project in alphabetical order, or NULL if they do not have a project.
-<details>
-<summary>Solution</summary>
-
 ```sql
-SELECT e.employee_name,
-       (SELECT MIN(p.project_name)
-        FROM projects p
-        WHERE p.project_name > COALESCE((SELECT project_name FROM projects WHERE project_id = e.project_id), '')) AS next_project
-FROM employees e;
-```
-
-</details>
-
-### 15. Find the average budget of projects for each department
-
-**Instruction**: Show each department's name and the average budget of the projects their employees are assigned to.
-<details>
-<summary>Solution</summary>
-
-```sql
-SELECT d.department_name, AVG(p.budget) AS avg_budget
+SELECT d.department_name,
+       STRING_AGG(DISTINCT p.project_name, ', ')  AS projects,
+       STRING_AGG(DISTINCT sp.project_name, ', ') AS side_projects
 FROM departments d
-         JOIN employees e ON d.department_id = e.department_id
-         JOIN projects p ON e.project_id = p.project_id
+         LEFT JOIN employees e ON d.department_id = e.department_id
+         LEFT JOIN projects p ON e.project_id = p.project_id
+         LEFT JOIN employees_side_projects esp ON e.employee_id = esp.employee_id
+         LEFT JOIN side_projects sp ON esp.side_project_id = sp.project_id
 GROUP BY d.department_name;
 ```
 
