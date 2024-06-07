@@ -2,7 +2,7 @@
 
 ## Bare basics
 
-For basics follow the SQL Bolt tutorial: [SQL Bolt](https://sqlbolt.com/).
+For basics follow the [SQL Bolt tutorial](https://sqlbolt.com/).
 Then you can set up a postgres database in podman (or docker) and try out the exercises below.
 
 ## Setup
@@ -77,8 +77,6 @@ VALUES (1, 'Alice', 1, 101),
 ```
 
 ## Exercises
-
-Completion mark: ✅
 
 ### 1. Find the top 3 projects with the highest budgets
 
