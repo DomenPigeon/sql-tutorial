@@ -385,6 +385,30 @@ GROUP BY d.department_name;
 
 </details>
 
+## Postgres performance
 
-## For future
+### Localhost connection vs. socket connection
+
+#### Setup
+
+```shell
+podman run --replace --name postgres-tutorial -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_PASSWORD=password -e POSTGRES_DB=tutorial -d -p 5432:5432 postgres
+podman exec -it -u postgres postgres-tutorial bash
+echo "SELECT 1;" > /tmp/select_one.sql
+```
+
+#### Localhost connection
+
+```shell
+pgbench -c 10 -T 20 -j 10 tutorial -h localhost -f /tmp/select_one.sql
+```
+
+#### Socket connection
+
+```shell
+pgbench -c 10 -T 20 -j 10 test -f /tmp/select_one.sql
+```
+
+## For the future
+
 Site for creating mock data: [Mockaroo](https://www.mockaroo.com/)
